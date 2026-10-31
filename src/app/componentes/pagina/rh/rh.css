@@ -1,0 +1,45 @@
+.seccion-calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.seccion-calendario h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 0;
+  font-weight: 600;
+}
+
+.dias-contenedor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dia {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+}
+
+.dia.activo {
+  background: rgba(95, 160, 107, 0.16);
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+  font-weight: 600;
+}
+
+.tabla-datos td:last-child,
+.tabla-datos th:last-child {
+  text-align: right;
+}

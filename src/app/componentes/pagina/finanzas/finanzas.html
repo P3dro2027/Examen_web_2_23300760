@@ -1,0 +1,110 @@
+<div class="modulo-contenedor">
+  <div class="cabecera-modulo">
+    <div class="textos-cabecera">
+      <h2>Contabilidad y Finanzas</h2>
+      <p>Estadísticas, reportes y gráficas, con exportación a Excel</p>
+    </div>
+    <div>
+      <button class="btn-cancelar" style="margin-right: 8px;" (click)="exportarExcel()">Exportar a Excel</button>
+      <button class="btn-primario-cafe" (click)="abrirModal()">+ Nuevo movimiento</button>
+    </div>
+  </div>
+
+  <div class="cuadro-resta-balance">
+    <div class="bloque-resta">
+      <span class="etiqueta-operacion">Ingresos del mes</span>
+      <h3 class="monto-operacion ingreso">{{ resumen.ingresosMes }}</h3>
+    </div>
+
+    <div class="signo-operacion">−</div>
+
+    <div class="bloque-resta">
+      <span class="etiqueta-operacion">Egresos del mes</span>
+      <h3 class="monto-operacion egreso">{{ resumen.egresosMes }}</h3>
+    </div>
+
+    <div class="signo-operacion">=</div>
+
+    <div class="bloque-resta">
+      <span class="etiqueta-operacion">Utilidad neta</span>
+      <h3 class="monto-operacion utilidad">{{ resumen.utilidadNeta }}</h3>
+    </div>
+  </div>
+
+  <div class="seccion-grafica">
+    <h4>Ingresos por semana</h4>
+    <div class="contenedor-grafico">
+      @for (semana of datosGrafica; track semana.semana) {
+        <div class="barra-grupo">
+          <div class="barra" [style.height.%]="semana.porcentajeAltura"></div>
+          <span>{{ semana.semana }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="seccion-tabla">
+    <h4>Reportes recientes</h4>
+    <div class="contenedor-tabla">
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>Reporte</th>
+            <th>Periodo</th>
+            <th>Fecha</th>
+            <th>Formato</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reporte of reportes; track reporte.id) {
+            <tr>
+              <td>{{ reporte.nombre }}</td>
+              <td>{{ reporte.periodo }}</td>
+              <td>{{ reporte.fecha }}</td>
+              <td>{{ reporte.formato }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (mostrarModal) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3>Registrar Movimiento Financiero</h3>
+          <button class="btn-cerrar-x" (click)="cerrarModal()">✕</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="form-error-alert">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        <div class="form-grupo">
+          <label>Tipo de movimiento:</label>
+          <select [value]="formTipoMovimiento" (change)="formTipoMovimiento = $any($event.target).value">
+            <option value="ingreso">Ingreso</option>
+            <option value="egreso">Egreso</option>
+          </select>
+        </div>
+        <div class="form-grupo">
+          <label>Monto ($):</label>
+          <input type="number" [value]="formMonto" (input)="formMonto = $any($event.target).value" placeholder="0.00" />
+        </div>
+        <div class="form-grupo">
+          <label>Descripción:</label>
+          <input type="text" [value]="formDescripcion" (input)="formDescripcion = $any($event.target).value" placeholder="Ej. Pago de servicios" />
+        </div>
+        <div class="modal-acciones">
+          <button class="btn-cancelar" [disabled]="cargando" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-guardar" [disabled]="cargando" (click)="guardarMovimiento()">
+            {{ cargando ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

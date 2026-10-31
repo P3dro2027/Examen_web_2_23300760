@@ -1,0 +1,181 @@
+<div class="modulo-contenedor">
+  <div class="cabecera-modulo">
+    <div class="textos-cabecera">
+      <h2>Gestión de Inventario</h2>
+      <p>Productos, categorías y control de existencias.</p>
+    </div>
+    @if (esAdmin()) {
+      <button class="btn-primario-cafe" (click)="abrirModal()">+ Agregar producto</button>
+    }
+  </div>
+
+  <div class="barra-herramientas"><span class="contador-registros">{{ productos.length }} registro(s)</span></div>
+
+  <div class="seccion-tabla">
+    <div class="contenedor-tabla">
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Cantidad</th>
+            <th>Precio unitario</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of productos; track item.id) {
+            <tr>
+              <td style="width: 60px;">
+                @if (item.imagen) {
+                  <img [src]="item.imagen" [alt]="item.nombre" style="width: 44px; height: 44px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line-strong);" />
+                } @else {
+                  <span style="font-size: 11px; color: var(--paper-dim);">Sin foto</span>
+                }
+              </td>
+              <td><strong>{{ item.nombre }}</strong></td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.cantidad }}</td>
+              <td>${{ item.precio }}</td>
+              <td>
+                <span class="etiqueta {{ item.claseEstado }}">{{ item.estado }}</span>
+              </td>
+              <td class="acciones-inventario">
+                <button type="button" class="btn-editar" (click)="editarProducto(item)">Editar</button>
+                <button type="button" class="btn-eliminar" (click)="eliminarProducto(item)">Borrar</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 24px; color: var(--ink-dim);">
+                No hay productos en inventario.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="seccion-distribuidores">
+    <div class="encabezado-seccion">
+      <div>
+        <h3>Distribuidores</h3>
+        <p>Proveedores que surten el inventario.</p>
+      </div>
+      @if (esAdmin()) {
+        <button type="button" class="btn-primario-cafe" (click)="abrirModalDistribuidor()">+ Agregar distribuidor</button>
+      }
+    </div>
+    @if (errorDistribuidor) {
+      <div class="form-error-alert">{{ errorDistribuidor }}</div>
+    }
+    <div class="contenedor-tabla">
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (distribuidor of distribuidores; track distribuidor.id) {
+            <tr>
+              <td>{{ distribuidor.id }}</td>
+              <td><strong>{{ distribuidor.nombre }}</strong></td>
+              <td class="acciones-inventario">
+                <button type="button" class="btn-editar" (click)="editarDistribuidor(distribuidor)">Editar</button>
+                <button type="button" class="btn-eliminar" (click)="eliminarDistribuidor(distribuidor)">Borrar</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="tabla-vacia">No hay distribuidores registrados.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (mostrarModal) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3>{{ productoEditandoId === null ? 'Agregar Producto' : 'Editar Producto' }}</h3>
+          <button class="btn-cerrar-x" (click)="cerrarModal()">✕</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="form-error-alert">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        <div class="form-grupo">
+          <label>Nombre del producto:</label>
+          <input type="text" [value]="formNombre" (input)="formNombre = $any($event.target).value" placeholder="Ej. Café Espresso" />
+        </div>
+        <div class="form-grupo">
+          <label>Categoría:</label>
+          <input type="text" [value]="formCategoria" (input)="formCategoria = $any($event.target).value" placeholder="Ej. Bebidas Calientes" />
+        </div>
+        <div class="form-grupo">
+          <label>Precio unitario ($):</label>
+          <input type="number" [value]="formPrecio" (input)="formPrecio = $any($event.target).value" placeholder="0.00" />
+        </div>
+        <div class="form-grupo">
+          <label>Cantidad en inventario:</label>
+          <input type="number" [value]="formCantidad" (input)="formCantidad = $any($event.target).value" placeholder="0" />
+        </div>
+
+        <div class="form-grupo">
+          <label>Foto del producto:</label>
+          <input type="file" accept="image/*" (change)="seleccionarFoto($event)" />
+          @if (formImagen) {
+            <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+              <img [src]="formImagen" alt="Vista previa" style="height: 60px; width: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line-strong);" />
+              <button type="button" class="btn-cancelar" style="padding: 4px 8px; font-size: 11px;" (click)="formImagen = ''">Quitar foto</button>
+            </div>
+          }
+
+        </div>
+
+        <div class="modal-acciones">
+          <button class="btn-cancelar" [disabled]="cargando" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-guardar" [disabled]="cargando" (click)="guardarProducto()">
+            {{ cargando ? 'Guardando...' : (productoEditandoId === null ? 'Guardar' : 'Guardar cambios') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mostrarModalDistribuidor) {
+    <div class="modal-overlay">
+      <div class="modal-contenido modal-distribuidor">
+        <div class="modal-cabecera">
+          <h3>{{ distribuidorEditandoId === null ? 'Agregar distribuidor' : 'Editar distribuidor' }}</h3>
+          <button type="button" class="btn-cerrar-x" [disabled]="cargandoDistribuidor" (click)="cerrarModalDistribuidor()">✕</button>
+        </div>
+        @if (errorDistribuidor) {
+          <div class="form-error-alert">{{ errorDistribuidor }}</div>
+        }
+        <div class="form-grupo">
+          <label for="nombre-distribuidor">Nombre:</label>
+          <input id="nombre-distribuidor" type="text" [value]="formNombreDistribuidor" (input)="formNombreDistribuidor = $any($event.target).value" placeholder="Nombre del distribuidor" />
+        </div>
+        <div class="modal-acciones">
+          <button type="button" class="btn-cancelar" [disabled]="cargandoDistribuidor" (click)="cerrarModalDistribuidor()">Cancelar</button>
+          <button type="button" class="btn-guardar" [disabled]="cargandoDistribuidor" (click)="guardarDistribuidor()">
+            {{ cargandoDistribuidor ? 'Guardando...' : (distribuidorEditandoId === null ? 'Guardar' : 'Guardar cambios') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

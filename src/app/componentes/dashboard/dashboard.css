@@ -1,0 +1,90 @@
+.dashboard-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dashboard-hero {
+  max-width: 68ch;
+}
+
+.dashboard-hero h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
+}
+
+.dashboard-hero p {
+  margin: 0;
+  color: var(--ink-dim);
+  line-height: 1.55;
+}
+
+.modulo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.modulo-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-green);
+  border-radius: 8px;
+  padding: 1.25rem 1.35rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.modulo-tarjeta:hover {
+  border-left-color: var(--accent-mustard);
+  transform: translateY(-1px);
+}
+
+.modulo-tarjeta h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0;
+  color: var(--ink);
+}
+
+.modulo-tarjeta > p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+
+.modulo-tarjeta ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.modulo-tarjeta li .valor {
+  font-family: var(--font-mono);
+  color: var(--ink);
+}
+
+.modulo-tarjeta li.alerta,
+.modulo-tarjeta li.alerta .valor {
+  color: var(--accent-danger);
+}
+
+.enlace-abrir {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-green);
+}

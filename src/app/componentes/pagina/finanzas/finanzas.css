@@ -1,0 +1,94 @@
+/* Cuadro único de balance en formato de resta */
+.cuadro-resta-balance {
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-green);
+  padding: 1.4rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.bloque-resta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 140px;
+}
+
+.etiqueta-operacion {
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.monto-operacion {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--ink);
+}
+
+.monto-operacion.ingreso {
+  color: var(--ink);
+}
+
+.monto-operacion.egreso {
+  color: var(--accent-danger);
+}
+
+.monto-operacion.utilidad {
+  color: var(--accent-green);
+}
+
+.signo-operacion {
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--paper-dim);
+  user-select: none;
+  line-height: 1;
+}
+
+.texto-verde {
+  color: var(--accent-green) !important;
+}
+
+.contenedor-grafico {
+  background: var(--surface);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  padding: 20px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  height: 200px;
+}
+
+.barra-grupo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.barra {
+  width: 100%;
+  max-width: 32px;
+  background: var(--accent-mustard);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+}
+
+.barra-grupo span {
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  margin-top: 8px;
+}

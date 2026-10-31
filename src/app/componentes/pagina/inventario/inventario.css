@@ -1,0 +1,61 @@
+.seccion-distribuidores {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.encabezado-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.encabezado-seccion h3 {
+  margin: 0 0 0.25rem;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.encabezado-seccion p {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.tabla-vacia {
+  padding: 1.5rem;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.modal-distribuidor {
+  max-width: 420px;
+}
+
+.acciones-inventario {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.acciones-inventario button {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.4rem;
+  margin-right: 0.4rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.acciones-inventario button:hover {
+  text-decoration: underline;
+}
+
+.btn-editar {
+  color: var(--accent-green);
+}
+
+.btn-eliminar {
+  color: var(--accent-danger);
+}

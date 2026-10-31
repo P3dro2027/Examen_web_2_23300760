@@ -1,0 +1,168 @@
+<div class="modulo-contenedor">
+  <div class="cabecera-modulo">
+    <div class="textos-cabecera">
+      <h2>Recursos Humanos</h2>
+      <p>Empleados, asistencia, nómina y calendario del mes.</p>
+    </div>
+    <button class="btn-primario-cafe" (click)="abrirModal()">+ Agregar empleado</button>
+  </div>
+
+  <div class="barra-herramientas"><span class="contador-registros">{{ empleados.length }} registro(s)</span></div>
+
+  <div class="seccion-tabla">
+    <div class="contenedor-tabla">
+      <table class="tabla-datos">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Puesto</th>
+            <th>Salario</th>
+            <th>Turno asignado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (emp of empleados; track emp.id) {
+            <tr>
+              <td>{{ emp.nombre }}</td>
+              <td>{{ emp.puesto }}</td>
+              <td>{{ emp.salario }}</td>
+              <td>{{ emp.turno }}</td>
+              <td>
+                <button class="btn-cancelar" style="margin-right: 6px; padding: 2px 8px; font-size: 12px;" (click)="abrirModalAsistencia(emp)">Asistencia</button>
+                <button class="btn-cancelar" style="padding: 2px 8px; font-size: 12px;" (click)="abrirModalNomina(emp)">Nómina</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="seccion-calendario">
+    <h4>Calendario del mes</h4>
+    <div class="dias-contenedor">
+      @for (dia of diasCalendario; track dia.numero) {
+        <div class="dia {{ dia.activo ? 'activo' : '' }}">
+          {{ dia.numero }}
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (mostrarModal) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3>Agregar Empleado</h3>
+          <button class="btn-cerrar-x" (click)="cerrarModal()">✕</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="form-error-alert">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        <div class="form-grupo">
+          <label>Nombre del Empleado:</label>
+          <input type="text" [value]="formNombre" (input)="formNombre = $any($event.target).value" placeholder="Ej. Juan Pérez" />
+        </div>
+        <div class="form-grupo">
+          <label>Puesto:</label>
+          <input type="text" [value]="formPuesto" (input)="formPuesto = $any($event.target).value" placeholder="Ej. Barista" />
+        </div>
+        <div class="form-grupo">
+          <label>Horario / Turno:</label>
+          <input type="text" [value]="formHorario" (input)="formHorario = $any($event.target).value" placeholder="Ej. Matutino (8:00 - 16:00)" />
+        </div>
+
+        <div class="modal-acciones">
+          <button class="btn-cancelar" [disabled]="cargando" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-guardar" [disabled]="cargando" (click)="guardarEmpleado()">
+            {{ cargando ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mostrarModalAsistencia) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3>Registrar Asistencia - {{ empleadoSeleccionado?.nombre }}</h3>
+          <button class="btn-cerrar-x" (click)="cerrarModalAsistencia()">✕</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="form-error-alert">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        <div class="form-grupo">
+          <label>Fecha:</label>
+          <input type="date" [value]="formAsistenciaFecha" (input)="formAsistenciaFecha = $any($event.target).value" />
+        </div>
+        <div class="form-grupo">
+          <label>Hora de entrada:</label>
+          <input type="time" [value]="formAsistenciaHoraEntrada" (input)="formAsistenciaHoraEntrada = $any($event.target).value" />
+        </div>
+        <div class="form-grupo">
+          <label>Hora de salida:</label>
+          <input type="time" [value]="formAsistenciaHoraSalida" (input)="formAsistenciaHoraSalida = $any($event.target).value" />
+        </div>
+        <div class="form-grupo">
+          <label>Estado:</label>
+          <select [value]="formAsistenciaEstado" (change)="formAsistenciaEstado = $any($event.target).value">
+            <option value="Presente">Presente</option>
+            <option value="Falta">Falta</option>
+            <option value="Retardo">Retardo</option>
+            <option value="Permiso">Permiso</option>
+          </select>
+        </div>
+
+        <div class="modal-acciones">
+          <button class="btn-cancelar" [disabled]="cargando" (click)="cerrarModalAsistencia()">Cancelar</button>
+          <button class="btn-guardar" [disabled]="cargando" (click)="guardarAsistencia()">
+            {{ cargando ? 'Guardando...' : 'Guardar Asistencia' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mostrarModalNomina) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-cabecera">
+          <h3>Generar Nómina - {{ empleadoSeleccionado?.nombre }}</h3>
+          <button class="btn-cerrar-x" (click)="cerrarModalNomina()">✕</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="form-error-alert">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        <div class="form-grupo">
+          <label>Periodo:</label>
+          <input type="text" [value]="formNominaPeriodo" (input)="formNominaPeriodo = $any($event.target).value" placeholder="Ej. Quincenal 1 - Septiembre" />
+        </div>
+        <div class="form-grupo">
+          <label>Monto a pagar ($):</label>
+          <input type="number" [value]="formNominaMonto" (input)="formNominaMonto = $any($event.target).value" placeholder="0.00" />
+        </div>
+
+        <div class="modal-acciones">
+          <button class="btn-cancelar" [disabled]="cargando" (click)="cerrarModalNomina()">Cancelar</button>
+          <button class="btn-guardar" [disabled]="cargando" (click)="guardarNomina()">
+            {{ cargando ? 'Generando...' : 'Generar Nómina' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,384 @@
+/* ==========================================================================
+   Estilos globales — tema oscuro "cafetería a la hora de cierre"
+   (mismo sistema visual del ERP Cafetería completo)
+   ========================================================================== */
+:root {
+  --paper: #17140f;
+  --surface: #211d17;
+  --surface-hover: #2a251d;
+  --ink: #ece5d8;
+  --ink-dim: #a89b87;
+  --paper-dim: #6b6355;
+  --line: #3a332a;
+  --line-strong: #504736;
+  --accent-green: #5fa06b;
+  --accent-mustard: #dba848;
+  --accent-danger: #e07a63;
+
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+::placeholder {
+  color: var(--paper-dim);
+}
+
+/* Foco visible */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-mustard);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- Encabezado de módulo ---------- */
+.modulo-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cabecera-modulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.textos-cabecera h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin: 0 0 0.3rem;
+  color: var(--ink);
+}
+
+.textos-cabecera p {
+  margin: 0;
+  color: var(--ink-dim);
+  max-width: 60ch;
+  font-size: 0.9rem;
+}
+
+/* ---------- Botones ---------- */
+.btn-primario-cafe,
+.btn-guardar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--accent-mustard);
+  color: #241c0e;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primario-cafe:hover,
+.btn-guardar:hover:not(:disabled) {
+  background: #e6b761;
+}
+
+.btn-guardar:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secundario,
+.btn-cancelar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 0.15s ease;
+}
+
+.btn-secundario:hover,
+.btn-cancelar:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+/* ---------- Tablas ---------- */
+.contenedor-tabla {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.tabla-datos th {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--ink-dim);
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.tabla-datos td {
+  padding: 0.65rem 1rem;
+  border-top: none;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.tabla-datos tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-datos tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.seccion-grafica h4,
+.seccion-tabla h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
+}
+
+/* ---------- Etiquetas / badges ---------- */
+.etiqueta {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  background: var(--line);
+  color: var(--ink-dim);
+  border: none;
+}
+
+.etiqueta.verde {
+  background: rgba(95, 160, 107, 0.16);
+  color: var(--accent-green);
+}
+
+.etiqueta.naranja {
+  background: rgba(219, 168, 72, 0.18);
+  color: var(--accent-mustard);
+}
+
+.etiqueta.roja {
+  background: rgba(224, 122, 99, 0.16);
+  color: var(--accent-danger);
+}
+
+/* ---------- Modales ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4vh 1rem;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 0 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  color: var(--ink);
+}
+
+.modal-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 -1.25rem;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.modal-cabecera h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  margin: 0;
+  color: var(--ink);
+}
+
+.btn-cerrar-x {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--ink-dim);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.btn-cerrar-x:hover {
+  color: var(--ink);
+  background: var(--surface-hover);
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* ---------- Formularios ---------- */
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.form-grupo label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.form-grupo input,
+.form-grupo select,
+.form-grupo textarea {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+
+.form-grupo input:focus,
+.form-grupo select:focus,
+.form-grupo textarea:focus {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 1px;
+  border-color: var(--accent-green);
+}
+
+.form-grupo input[type="file"] {
+  padding: 0.4rem;
+  color: var(--ink-dim);
+}
+
+.form-error-alert,
+.alerta-error {
+  background: rgba(224, 122, 99, 0.12);
+  color: var(--accent-danger);
+  border: 1px solid rgba(224, 122, 99, 0.4);
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+/* ---------- Barra de herramientas / contador de registros ---------- */
+.barra-herramientas {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: -0.75rem;
+}
+
+.contador-registros {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+}
+
+/*  Acciones de fila como enlaces (Editar / Eliminar)*/
+.tabla-datos .btn-cancelar {
+  background: none;
+  border: none;
+  color: var(--accent-green);
+  font-size: 0.82rem;
+  font-weight: 400;
+  padding: 0.2rem 0.4rem !important;
+}
+
+.tabla-datos .btn-cancelar:hover:not(:disabled) {
+  background: none;
+  text-decoration: underline;
+}

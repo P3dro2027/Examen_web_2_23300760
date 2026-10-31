@@ -1,0 +1,51 @@
+<div class="pantalla-autenticacion">
+  <header class="auth-header">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+    </svg>
+    <span>Cafetería — Panel Interno</span>
+  </header>
+
+  <div class="auth-contenido">
+    <div class="tarjeta-auth">
+
+      <div class="auth-icono">
+      </div>
+
+      <div class="auth-cabecera">
+        <h2>{{ !mostrarRegistro ? 'Inicio de Sesión' : 'Crear Cuenta' }}</h2>
+        <p>{{ !mostrarRegistro ? 'Accede con tu cuenta de administrador o cliente' : 'Registra un nuevo usuario para acceder' }}</p>
+      </div>
+
+      @if (mensajeError) {
+        <div class="auth-alerta error">
+          {{ mensajeError }}
+        </div>
+      }
+
+      <form class="auth-formulario" (submit)="$event.preventDefault(); enviar()">
+        <div class="auth-grupo">
+          <label>Correo electrónico</label>
+          <input type="email" name="correo" [value]="correo" (input)="correo = $any($event.target).value" [placeholder]="!mostrarRegistro ? 'ejemplo@correo.com' : 'usuario@dominio.com'">
+        </div>
+
+        <div class="auth-grupo">
+          <label>Contraseña</label>
+          <input type="password" name="contrasena" [value]="contrasena" (input)="contrasena = $any($event.target).value" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn-auth" [disabled]="cargando">
+          {{ cargando ? 'Cargando...' : (!mostrarRegistro ? 'Iniciar Sesión' : 'Crear Cuenta') }}
+        </button>
+      </form>
+
+      <div class="auth-enlace">
+        <a href="#" (click)="alternarVista(); $event.preventDefault()">
+          {{ !mostrarRegistro ? '¿No tienes cuenta? Regístrate aquí' : '¿Ya tienes cuenta? Inicia sesión' }}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>

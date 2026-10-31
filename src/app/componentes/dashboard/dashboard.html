@@ -1,0 +1,20 @@
+<div class="dashboard-contenedor">
+  <header class="dashboard-hero">
+    <h2>Buen día. Así luce la cafetería hoy.</h2>
+    <p>Resumen general del sistema de la cafetería: entra a cada módulo para consultar sus listados, dar de alta registros y revisar el estado del negocio.</p>
+  </header>
+
+  <div class="modulo-grid">
+    @for (tarjeta of tarjetas; track tarjeta.id) {
+      <a class="modulo-tarjeta" [routerLink]="['/', tarjeta.id]">
+        <h3>{{ tarjeta.titulo }}</h3>
+        <p>{{ tarjeta.subtitulo }}</p>
+        <ul>
+          <li><span class="valor">{{ tarjeta.metrica1.valor }}</span> {{ tarjeta.metrica1.etiqueta }}</li>
+          <li [class.alerta]="tarjeta.metrica2.esAlerta"><span class="valor">{{ tarjeta.metrica2.valor }}</span> {{ tarjeta.metrica2.etiqueta }}</li>
+        </ul>
+        <span class="enlace-abrir">Abrir módulo</span>
+      </a>
+    }
+  </div>
+</div>

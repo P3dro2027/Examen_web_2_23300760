@@ -1,0 +1,171 @@
+@if (mostrarLayout()) {
+  <div class="layout-principal">
+
+    <header class="encabezado-superior">
+      <div class="encabezado-fila">
+        <a class="marca" routerLink="/">
+          <span class="icono-cafe">☕</span>
+          <span class="marca-texto">Cafetería <em>ERP</em></span>
+        </a>
+
+        <nav class="navegacion">
+          @if (esAdmin()) {
+            <a routerLink="/dashboard" routerLinkActive="activo" class="nav-item">
+              <img src="Panel.png" alt="" class="icono" /> Panel principal
+            </a>
+            <a routerLink="/finanzas" routerLinkActive="activo" class="nav-item">
+              <img src="Finanzas.png" alt="" class="icono" /> Contabilidad y Finanzas
+            </a>
+            <a routerLink="/inventario" routerLinkActive="activo" class="nav-item">
+              <img src="Hexagono.png" alt="" class="icono" /> Gestión de Inventario
+            </a>
+          }
+          <a routerLink="/ventas" routerLinkActive="activo" class="nav-item">
+            <img src="Cuadrado.png" alt="" class="icono" /> Ventas y Facturación
+          </a>
+          <a routerLink="/compras" routerLinkActive="activo" class="nav-item">
+            <img src="Compras.png" alt="" class="icono" /> Compras y Proveedores
+          </a>
+          @if (esAdmin()) {
+            <a routerLink="/rh" routerLinkActive="activo" class="nav-item">
+              <img src="Usuario.png" alt="" class="icono" /> Recursos Humanos
+            </a>
+          }
+        </nav>
+
+        <div class="header-acciones">
+          <button class="btn-salir" (click)="cerrarSesion()">Salir</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="area-trabajo">
+      <router-outlet></router-outlet>
+    </main>
+
+    <footer class="pie-legal">
+      <button type="button" class="btn-legal-link" (click)="legalService.abrirTerminos()">Términos y Condiciones</button>
+      <button type="button" class="btn-legal-link" (click)="legalService.abrirPrivacidad()">Aviso de Privacidad</button>
+    </footer>
+
+  </div>
+} @else {
+  <div class="pantalla-login-contenedor">
+    <router-outlet></router-outlet>
+    <footer class="login-footer-legal">
+      <button type="button" class="btn-legal-link" (click)="legalService.abrirTerminos()">Términos y Condiciones</button>
+      <button type="button" class="btn-legal-link" (click)="legalService.abrirPrivacidad()">Aviso de Privacidad</button>
+    </footer>
+  </div>
+}
+
+<!-- Modal Global para Terminos y Condiciones / Avisos de Privacidad -->
+@if (legalService.documentoActivo(); as doc) {
+  <div class="modal-legal-overlay" (click)="legalService.cerrar()">
+    <div class="modal-legal-card" (click)="$event.stopPropagation()">
+      <div class="modal-legal-header">
+        <h2>{{ doc === 'terminos' ? 'Términos y Condiciones' : 'Aviso de Privacidad' }}</h2>
+        <button type="button" class="btn-cerrar-legal" (click)="legalService.cerrar()" title="Cerrar (Salir)">✕</button>
+      </div>
+
+      <div class="modal-legal-body">
+        @if (doc === 'terminos') {
+          <p class="muted">Última actualización: 21 de octubre de 2026</p>
+
+          <h3>1. Identificación del usuario y responsable</h3>
+          <p>ERP Cafetería es una plataforma desarrollada para la venta y distribución de una cafetería. El usuario se identifica mediante las credenciales y datos fiscales otorgados al registrarse o generar compras en el sistema.</p>
+
+          <h3>2. Uso del sitio</h3>
+          <p>El sitio web está destinado a la consulta de inventarios, realización de pedidos, compras en línea y emisión de facturación interna. Para operar correctamente en la plataforma:
+          <ul>
+            <li>Inicia sesión con tu correo y contraseña registrados según tu tipo de usuario (Administrador o Cliente).</li>
+            <li>Explora el catálogo en la sección de Carrito o Ventas para consultar precios en MXN y disponibilidad.</li>
+            <li>Selecciona las cantidades deseadas y agrega los productos al carrito.</li>
+            <li>En el carrito, presiona Proceder al Pago, confirma tus datos fiscales (Nombre, RFC y correo para recibir la factura) y acepta los términos.</li>
+            <li>Paga mediante la pasarela de PayPal Sandbox con tu cuenta de prueba.</li>
+            <li>Al finalizar, el sistema registra la venta, descuenta el inventario y envía a tu correo el comprobante junto con el archivo XML adjunto.</li>
+            <li>Puedes consultar tu historial de compras y facturas XML en la sección de Ventas.</li>
+          </ul>
+          <p>El usuario se compromete a hacer uso responsable, no transferir sus credenciales y abstenerse de actividades ilícitas o que dañen la integridad de la plataforma.</p>
+
+          <h3>3. Registro de usuario</h3>
+          <p>Para acceder a determinadas funciones operativas y administrativas se requiere contar con una cuenta. Existen 2 tipos de usuarios: Administrador y Cliente. Cada usuario es responsable de salvaguardar su contraseña.</p>
+
+          <h3>4. Envío y Entrega</h3>
+          <p>Las entregas de pedidos se gestionan principalmente en mostrador o conforme a la dirección local especificada durante el checkout. Los tiempos de preparación y entrega están sujetos al horario de servicio.</p>
+
+          <h3>5. Devolución y Garantía</h3>
+          <p>Tratándose de productos perecederos (alimentos y bebidas), cualquier reclamación, reposición o devolución por defecto o disconformidad en el producto debe notificarse inmediatamente en el mostrador de la cafetería con el folio o comprobante emitido.</p>
+
+          <h3>6. Responsabilidad</h3>
+          <p>La responsabilidad del sistema se limita a la garantía de funcionamiento normal y la atención a problemas técnicos. No se garantiza la disponibilidad ininterrumpida o infalibilidad técnica frente a interrupciones ajenas a la red.</p>
+
+          <h3>7. Precio</h3>
+          <p>Todos los precios se encuentran expresados en pesos mexicanos (MXN) e integran el desglose de IVA (16%) al formalizar el pedido. Los precios de venta al público pueden ser ajustados en el catálogo por la administración en cualquier momento.</p>
+
+          <h3>8. Modelo de pago</h3>
+          <p>Se admite pago en efectivo en mostrador y pago digital a través de la pasarela segura de PayPal. En el pago digital, la orden se autoriza y captura de manera electrónica y se vincula con la base de datos interna.</p>
+
+          <h3>9. Propiedad intelectual</h3>
+          <p>El código, diseño gráfico, logotipos, marcas y estructura arquitectónica del ERP pertenecen a sus respectivos desarrolladores.</p>
+
+          <h3>10. Privacidad</h3>
+          <p>El tratamiento, manejo y resguardo de la información personal se rige por lo dispuesto en nuestro Aviso de Privacidad disponible en este mismo sistema.</p>
+
+          <h3>11. Modificaciones</h3>
+          <p>La administración se reserva la facultad de actualizar estos Términos y Condiciones en cualquier ocasión. La versión vigente será siempre la publicada en esta sección.</p>
+
+          <h3>12. Contacto</h3>
+          <p>Para consultas, aclaraciones o soporte técnico del sistema ERP, puedes comunicarte con el administrador a través del correo oficial: a23300760@ceti.mx o en el área de sistemas.</p>
+
+          <div class="legal-toggle">
+            <button type="button" class="btn-subrayado" (click)="legalService.abrirPrivacidad()">Ver Aviso de Privacidad</button>
+          </div>
+        } @else {
+          <p class="muted">Última actualización: 21 de octubre de 2026</p>
+
+          <h3>1. ¿Quién recopila tus datos?</h3>
+          <p>El responsable del tratamiento de los datos personales es el proyecto ERP Cafetería, administrado a través de su departamento de sistemas (correo de contacto: a23300760@ceti.mx).</p>
+
+          <h3>2. ¿Qué datos se recopilan?</h3>
+          <p>Recopilamos los datos estrictamente indispensables para la operatividad del servicio:
+          <ul>
+            <li><strong>Datos de cuenta y contacto:</strong> correo electrónico y contraseña.</li>
+            <li><strong>Datos de facturación y compra:</strong> Nombre o razón social del receptor, Registro Federal de Contribuyentes (RFC), dirección de entrega, lista de productos adquiridos y método de pago.</li>
+            <li><strong>Datos bancarios:</strong> No recopilamos ni almacenamos números de tarjetas ni contraseñas bancarias; toda transacción con PayPal se ejecuta directamente en sus servidores cifrados.</li>
+          </ul>
+          
+
+          <h3>3. ¿Para qué se usan los datos?</h3>
+          <p>Los datos recabados son utilizados para las siguientes finalidades primarias:
+          <ul>
+            <li>Autenticación de sesiones y control de roles y permisos mediante los guards del sistema.</li>
+            <li>Procesamiento y registro de pedidos y órdenes de compra en el catálogo.</li>
+            <li>Generación del comprobante en formato XML (estándar de facturación CFDI).</li>
+            <li>Envío automatizado de correos electrónicos con el recibo de compra y el archivo XML adjunto.</li>
+            <li>Control del inventario de productos y balances en el módulo de contabilidad interna.</li>
+          </ul>
+
+          <h3>4. ¿Con quién se comparten tus datos?</h3>
+          <p>Tus datos únicamente se transfieren a los siguientes proveedores de servicios indispensables:
+          <ul>
+            <li><strong>PayPal Inc.:</strong> Para la validación, autorización y captura de los pagos electrónicos en su entorno seguro.</li>
+            <li><strong>Resend / Servicio de mensajería:</strong> Únicamente para efectuar el despacho del correo electrónico con tu comprobante y el XML.</li>
+          </ul>
+          <p>Los datos personales bajo ninguna circunstancia son comercializados, rentados ni cedidos a terceros.</p>
+
+          <h3>5. ¿Cómo se ejercen los derechos del usuario (Derechos ARCO)?</h3>
+          <p>Como titular de tus datos, tienes derecho a Acceder a ellos, solicitar su Rectificación si son erróneos o están desactualizados, exigir su Cancelación (eliminación de la base de datos) y a Oponerte a su tratamiento. Para ejercer cualquiera de estos derechos ARCO, envía una solicitud por escrito al correo de contacto: a23300760@ceti.mx indicando tu nombre y la acción solicitada.</p>
+
+          <div class="legal-toggle">
+            <button type="button" class="btn-subrayado" (click)="legalService.abrirTerminos()">Ver Términos y Condiciones</button>
+          </div>
+        }
+      </div>
+
+      <div class="modal-legal-footer">
+        <button type="button" class="btn-entendido" (click)="legalService.cerrar()">Cerrar / Salir</button>
+      </div>
+    </div>
+  </div>
+}

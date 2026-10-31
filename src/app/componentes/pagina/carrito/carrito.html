@@ -1,0 +1,263 @@
+<div class="modulo-contenedor">
+  <div class="cabecera-modulo">
+    <div class="textos-cabecera">
+      <h2>Compras y Proveedores</h2>
+      <p>Elige productos del catálogo, revisa tu carrito y confirma la compra.</p>
+    </div>
+    <div class="resumen-rapido-carrito">
+      <span>Artículos seleccionados: <strong>{{ carritoService.totalArticulos() }}</strong></span>
+    </div>
+  </div>
+
+  <div class="layout-tienda">
+    <section class="seccion-catalogo">
+      <div class="barra-busqueda-catalogo">
+        <input 
+          type="text" 
+          placeholder="Buscar por nombre o categoría..." 
+          [value]="filtroTexto" 
+          (input)="filtroTexto = $any($event.target).value"
+          class="input-buscador"
+        />
+      </div>
+
+      @if (cargando) {
+        <div class="cargando-alerta">Cargando catálogo de productos...</div>
+      }
+
+      <div class="cuadricula-productos">
+        @for (prod of productosFiltrados(); track prod.id) {
+          <article class="tarjeta-producto" [class.sin-stock-fila]="prod.cantidad <= 0">
+            <div class="celda-foto">
+              @if (prod.imagen) {
+                <img [src]="prod.imagen" [alt]="prod.nombre" class="foto-producto-tabla" />
+              } @else {
+                <span class="icono-producto">☕</span>
+              }
+            </div>
+            <h3 class="nombre-prod-tabla">{{ prod.nombre }}</h3>
+            <p class="categoria-prod">{{ prod.categoria || 'Cafetería' }}</p>
+            <p class="precio-prod">${{ formatoMoneda(prod.precio) }} <small>MXN</small></p>
+            <span
+              class="stock-badge"
+              [class.verde]="prod.cantidad >= 10"
+              [class.naranja]="prod.cantidad > 0 && prod.cantidad < 10"
+              [class.roja]="prod.cantidad <= 0"
+            >
+              {{ prod.cantidad >= 10 ? 'Disponible (' + prod.cantidad + ')' : (prod.cantidad > 0 ? 'Poco stock (' + prod.cantidad + ')' : 'Agotado') }}
+            </span>
+
+            @if (prod.cantidad > 0) {
+              <div class="acciones-producto">
+                <input
+                  type="text"
+                  inputmode="numeric"
+                  [value]="cantidades[prod.id] || 1"
+                  (input)="actualizarCantidadDirecta(prod.id, $event)"
+                  class="input-cantidad-directa"
+                />
+                <button class="btn-agregar-tabla" (click)="agregarAlCarrito(prod)">
+                  Añadir al carrito
+                </button>
+              </div>
+            } @else {
+              <span class="texto-sin-stock">No disponible</span>
+            }
+          </article>
+        } @empty {
+          <div class="tabla-vacia-msg">No se encontraron productos en el catálogo.</div>
+        }
+      </div>
+    </section>
+
+    <aside class="seccion-carrito-sidebar">
+      <div class="tarjeta-carrito">
+        <div class="carrito-cabecera">
+          <h3>Carrito</h3>
+          @if (carritoService.items().length > 0) {
+            <button class="btn-vaciar" (click)="carritoService.vaciar()">Vaciar</button>
+          }
+        </div>
+
+        <div class="carrito-lista">
+          @if (carritoService.items().length > 0) {
+            <table class="tabla-carrito">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th aria-label="Acciones"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of carritoService.items(); track item.id) {
+                  <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>
+                      <button type="button" class="btn-eliminar-item" (click)="carritoService.eliminar(item.id)" title="Quitar producto">&#x2715;</button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <div class="carrito-vacio">
+              <p>Tu carrito está vacío.</p>
+              <small>Agrega productos del catálogo para comenzar.</small>
+            </div>
+          }
+        </div>
+
+        @if (carritoService.items().length > 0) {
+          <div class="carrito-totales">
+            <div class="fila-total">
+              <span>Subtotal:</span>
+              <strong>${{ formatoMoneda(carritoService.subtotal()) }}</strong>
+            </div>
+            <div class="fila-total">
+              <span>IVA (16%):</span>
+              <strong>${{ formatoMoneda(carritoService.iva()) }}</strong>
+            </div>
+            <div class="fila-total total-destacado">
+              <span>Total:</span>
+              <span class="monto-total">${{ formatoMoneda(carritoService.total()) }} MXN</span>
+            </div>
+
+            <button class="btn-comprar-principal" (click)="abrirCheckout()">
+              Proceder al Pago
+            </button>
+          </div>
+        }
+      </div>
+    </aside>
+  </div>
+
+  <!-- Modal de Checkout y PayPal -->
+  @if (mostrarCheckout) {
+    <div class="modal-overlay">
+      <div class="modal-contenido modal-checkout">
+        <div class="modal-cabecera">
+          <h3>Confirmar Compra y Pago</h3>
+          <button class="btn-cerrar-x" [disabled]="procesandoPago" (click)="cerrarCheckout()">&#x2715;</button>
+        </div>
+
+        @if (errorMensaje) {
+          <div class="alerta-error">
+            {{ errorMensaje }}
+          </div>
+        }
+
+        @if (estadoPago === 'NINGUNO') {
+          <div class="checkout-cuerpo">
+            <div class="resumen-pedido">
+              <h4>Resumen del Pedido</h4>
+              <ul class="lista-resumen">
+                @for (item of carritoService.items(); track item.id) {
+                  <li>
+                    <span>{{ item.cantidad }}x {{ item.nombre }}</span>
+                    <span>${{ formatoMoneda(item.subtotal) }}</span>
+                  </li>
+                }
+              </ul>
+              <div class="totales-pedido">
+                <div>Subtotal: <strong>${{ formatoMoneda(carritoService.subtotal()) }}</strong></div>
+                <div>IVA (16%): <strong>${{ formatoMoneda(carritoService.iva()) }}</strong></div>
+                <div class="total-final">Total a pagar: <strong>${{ formatoMoneda(carritoService.total()) }} MXN</strong></div>
+              </div>
+            </div>
+
+            <div class="datos-cliente-form">
+              <h4>Datos para el Comprobante y Envío de Correo</h4>
+              <div class="form-grupo">
+                <label>Nombre del Receptor:</label>
+                <input type="text" [value]="nombreCliente" (input)="nombreCliente = $any($event.target).value" placeholder="Nombre completo para la factura" />
+              </div>
+              <div class="form-grupo">
+                <label>RFC (Receptor):</label>
+                <input type="text" [value]="rfcCliente" (input)="rfcCliente = $any($event.target).value" placeholder="XAXX010101000" />
+              </div>
+              <div class="form-grupo">
+                <label>Correo Electrónico (para recibir XML y detalles):</label>
+                <input type="email" [value]="correoCliente" (input)="correoCliente = $any($event.target).value" placeholder="tu_correo@ejemplo.com" />
+              </div>
+              <div class="form-grupo">
+                <label>Dirección de entrega:</label>
+                <input type="text" [value]="direccionEntrega" (input)="direccionEntrega = $any($event.target).value" placeholder="Mostrador o domicilio" />
+              </div>
+
+              <!-- Casilla de Términos y Condiciones / Aviso de Privacidad -->
+              <div class="casilla-legal">
+                <label class="label-checkbox">
+                  <input type="checkbox" [checked]="aceptoTerminos" (change)="aceptoTerminos = !aceptoTerminos" />
+                  <span>
+                    He leído y acepto los 
+                    <a href="javascript:void(0)" (click)="legalService.abrirTerminos()">Términos y Condiciones</a>
+                    y el 
+                    <a href="javascript:void(0)" (click)="legalService.abrirPrivacidad()">Aviso de Privacidad</a>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="seccion-paypal-boton">
+              <p class="nota-paypal">Al hacer clic en el botón serás redirigido a la pasarela segura de PayPal para autorizar el pago:</p>
+
+              @if (procesandoPago) {
+                <div class="procesando-spinner">
+                  <span>Conectando con PayPal... Por favor espera.</span>
+                </div>
+              } @else {
+                <div class="botones-paypal-accion">
+                  <button type="button" class="btn-paypal-autorizar" (click)="pagarConPaypal()">
+                    Pagar con PayPal
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (estadoPago === 'APROBADO') {
+          <div class="resultado-pago aprobado">
+            <h3>Pago Aprobado y Completado</h3>
+            <p class="mensaje-exito">{{ mensajeResultado }}</p>
+            <div class="detalles-exito">
+              <p><strong>Folio de Venta:</strong> #{{ folioVenta }}</p>
+              <p><strong>Factura XML:</strong> Generada y adjuntada en el correo enviado.</p>
+              <p><strong>Inventario:</strong> Stock actualizado en la base de datos.</p>
+            </div>
+            <div class="acciones-resultado">
+              <button class="btn-ver-facturas" (click)="irAVentas()">
+                Ver en Ventas / Facturas
+              </button>
+              <button class="btn-seguir-comprando" (click)="cerrarCheckout()">
+                Aceptar y Cerrar
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (estadoPago === 'RECHAZADO') {
+          <div class="resultado-pago rechazado">
+            <h3>Pago No Completado</h3>
+            <p>{{ mensajeResultado }}</p>
+            <div class="detalles-rechazo">
+              <p>La transacción no pudo completarse. Puedes volver a intentar la operación.</p>
+            </div>
+            <div class="acciones-resultado">
+              <button class="btn-reintentar" (click)="estadoPago = 'NINGUNO'">
+                Reintentar Pago
+              </button>
+              <button class="btn-cancelar-modal" (click)="cerrarCheckout()">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+  }
+
+</div>
